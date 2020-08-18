@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.wesleylima.estudo.domain.Categoria;
 import com.wesleylima.estudo.domain.Cidade;
+import com.wesleylima.estudo.domain.Cliente;
+import com.wesleylima.estudo.domain.Endereco;
 import com.wesleylima.estudo.domain.Estado;
 import com.wesleylima.estudo.domain.Produto;
+import com.wesleylima.estudo.domain.enums.TipoCliente;
 import com.wesleylima.estudo.repository.CategoriaRepository;
 import com.wesleylima.estudo.repository.CidadeRepository;
+import com.wesleylima.estudo.repository.ClienteRepository;
+import com.wesleylima.estudo.repository.EnderecoRepository;
 import com.wesleylima.estudo.repository.EstadoRepository;
 import com.wesleylima.estudo.repository.ProdutoRepository;
 
@@ -26,6 +31,10 @@ public class EstudoApplication implements CommandLineRunner {
 	@Autowired private CidadeRepository cidadeRepository;
 	
 	@Autowired private EstadoRepository estadoRepository;
+	
+	@Autowired private ClienteRepository clienteRepository;
+	
+	@Autowired private EnderecoRepository enderecoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(EstudoApplication.class, args);
@@ -64,6 +73,18 @@ public class EstudoApplication implements CommandLineRunner {
 		
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
+		
+		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "12345678910", TipoCliente.PESSOAFISICA);
+		
+		cli1.getTelefone().addAll(Arrays.asList("12345678","987654321"));
+		
+		Endereco e1 = new Endereco(null, "Rua flores", "300", "APTO 03", "Jardim", "12345020", cli1, c2);
+		Endereco e2 = new Endereco(null, "Rua 3", "200", "APTO 05", "Paraíso", "12345020", cli1, c3);
+		
+		cli1.getEndereco().addAll(Arrays.asList(e1, e2));
+		
+		clienteRepository.save(cli1);
+		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 	}
 
 }
