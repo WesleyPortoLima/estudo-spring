@@ -26,7 +26,7 @@ public class ClienteService {
 						+ ", Tipo: " + Cliente.class.getName()));
 	}
 	
-	public Cliente update(final Cliente cliente) {
+	public Cliente update(Cliente cliente) {
 		Cliente newCli = findById(cliente.getId());
 		updateData(cliente, newCli);
 		
