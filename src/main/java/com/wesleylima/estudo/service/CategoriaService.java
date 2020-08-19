@@ -1,13 +1,15 @@
 package com.wesleylima.estudo.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.wesleylima.estudo.domain.Categoria;
+import com.wesleylima.estudo.repository.CategoriaRepository;
 import com.wesleylima.estudo.service.exception.DataIntegrityException;
 import com.wesleylima.estudo.service.exception.ObjectNotFoundException;
-import com.wesleylima.estudo.repository.CategoriaRepository;
 
 @Service
 public class CategoriaService {
@@ -38,5 +40,9 @@ public class CategoriaService {
 		catch(DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível deletar uma categoria que possua produtos!");
 		}
+	}
+	
+	public List<Categoria> findAll() {
+		return categoriaRepository.findAll();
 	}
 }
