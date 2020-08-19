@@ -1,5 +1,6 @@
 package com.wesleylima.estudo.controller;
 
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.wesleylima.estudo.domain.Cliente;
 import com.wesleylima.estudo.dto.ClienteDTO;
+import com.wesleylima.estudo.dto.ClienteNewDTO;
 import com.wesleylima.estudo.service.ClienteService;
 
 @RestController
@@ -31,7 +34,17 @@ public class ClienteController {
 
 		return ResponseEntity.ok().body(Cliente);
 	} 
-
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public ResponseEntity<Void> save(@Valid @RequestBody ClienteNewDTO dto) {
+		Cliente cliente = clienteService.save(clienteService.fromDTO(dto));
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}").buildAndExpand(cliente.getId())
+				.toUri();
+		
+		return ResponseEntity.created(uri).build();
+	} 
+	
 	@RequestMapping(value = "/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(
 			@Valid @RequestBody ClienteDTO dto, 

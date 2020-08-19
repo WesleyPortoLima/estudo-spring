@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.wesleylima.estudo.domain.Categoria;
-import com.wesleylima.estudo.domain.Cliente;
 import com.wesleylima.estudo.dto.CategoriaDTO;
 import com.wesleylima.estudo.repository.CategoriaRepository;
 import com.wesleylima.estudo.service.exception.DataIntegrityException;
