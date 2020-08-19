@@ -92,12 +92,12 @@ public class EstudoApplication implements CommandLineRunner {
 		
 		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "12345678910", TipoCliente.PESSOAFISICA);
 		
-		cli1.getTelefone().addAll(Arrays.asList("12345678","987654321"));
+		cli1.getTelefones().addAll(Arrays.asList("12345678","987654321"));
 		
 		Endereco e1 = new Endereco(null, "Rua flores", "300", "APTO 03", "Jardim", "12345020", cli1, c2);
 		Endereco e2 = new Endereco(null, "Rua 3", "200", "APTO 05", "Paraíso", "12345020", cli1, c3);
 		
-		cli1.getEndereco().addAll(Arrays.asList(e1, e2));
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
 		
 		clienteRepository.save(cli1);
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
@@ -114,7 +114,7 @@ public class EstudoApplication implements CommandLineRunner {
 		Pagamento pgto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2019 00:00"), null);
 		ped2.setPagamento(pgto2);
 		
-		cli1.getPedido().addAll(Arrays.asList(ped1, ped2));
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
 		
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pgto1, pgto2));
