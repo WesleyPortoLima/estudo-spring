@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class StandardError implements Serializable {
 	private static final long serialVersionUID = 6382393621830874927L;
 	
-	private Integer Status;
+	private Integer status;
 	private String msg;
 	private Long timeStamp;
 	
@@ -13,16 +13,16 @@ public class StandardError implements Serializable {
 	
 	public StandardError(Integer status, String msg, Long timeStamp) {
 		super();
-		Status = status;
+		this.status = status;
 		this.msg = msg;
 		this.timeStamp = timeStamp;
 	}
 	
 	public Integer getStatus() {
-		return Status;
+		return status;
 	}
 	public void setStatus(Integer status) {
-		Status = status;
+		this.status = status;
 	}
 	public String getMsg() {
 		return msg;
