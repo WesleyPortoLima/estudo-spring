@@ -13,6 +13,7 @@ import com.wesleylima.estudo.domain.Cidade;
 import com.wesleylima.estudo.domain.Cliente;
 import com.wesleylima.estudo.domain.Endereco;
 import com.wesleylima.estudo.domain.Estado;
+import com.wesleylima.estudo.domain.ItemPedido;
 import com.wesleylima.estudo.domain.Pagamento;
 import com.wesleylima.estudo.domain.PagamentoComBoleto;
 import com.wesleylima.estudo.domain.PagamentoComCartao;
@@ -25,6 +26,7 @@ import com.wesleylima.estudo.repository.CidadeRepository;
 import com.wesleylima.estudo.repository.ClienteRepository;
 import com.wesleylima.estudo.repository.EnderecoRepository;
 import com.wesleylima.estudo.repository.EstadoRepository;
+import com.wesleylima.estudo.repository.ItemPedidoRepository;
 import com.wesleylima.estudo.repository.PagamentoRepository;
 import com.wesleylima.estudo.repository.PedidoRepository;
 import com.wesleylima.estudo.repository.ProdutoRepository;
@@ -47,6 +49,8 @@ public class EstudoApplication implements CommandLineRunner {
 	@Autowired private PedidoRepository pedidoRepository;
 	
 	@Autowired private PagamentoRepository pagamentoRepository;
+	
+	@Autowired private ItemPedidoRepository itemPedidoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(EstudoApplication.class, args);
@@ -114,6 +118,19 @@ public class EstudoApplication implements CommandLineRunner {
 		
 		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
 		pagamentoRepository.saveAll(Arrays.asList(pgto1, pgto2));
+		
+		ItemPedido ip1 = new ItemPedido(ped1, p1, 0.00, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, p3, 0.00, 1, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, p2, 100.00, 1, 800.00);
+		
+		ped1.getItens().addAll(Arrays.asList(ip1,ip2));
+		ped1.getItens().add(ip3);
+		
+		p1.getItens().addAll(Arrays.asList(ip1));
+		p2.getItens().addAll(Arrays.asList(ip3));
+		p3.getItens().addAll(Arrays.asList(ip2));
+		
+		itemPedidoRepository.saveAll(Arrays.asList(ip1,ip2,ip3));
 		
 	}
 
