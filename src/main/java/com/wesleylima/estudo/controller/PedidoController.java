@@ -17,7 +17,7 @@ public class PedidoController {
 	@Autowired private PedidoService pedidoService;
 	
 	@RequestMapping(value = "/{id}",method=RequestMethod.GET)
-	public ResponseEntity<?> find(@PathVariable final Integer id) {
+	public ResponseEntity<Pedido> find(@PathVariable final Integer id) {
 		Pedido pedido = pedidoService.findById(id);
 
 		return ResponseEntity.ok().body(pedido);

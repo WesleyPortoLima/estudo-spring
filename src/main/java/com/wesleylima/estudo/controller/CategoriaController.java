@@ -21,7 +21,7 @@ public class CategoriaController {
 	@Autowired private CategoriaService categoriaService;
 	
 	@RequestMapping(value = "/{id}",method=RequestMethod.GET)
-	public ResponseEntity<?> find(@PathVariable final Integer id) {
+	public ResponseEntity<Categoria> find(@PathVariable final Integer id) {
 		Categoria categoria = categoriaService.findById(id);
 
 		return ResponseEntity.ok().body(categoria);
@@ -35,5 +35,15 @@ public class CategoriaController {
 				.toUri();
 		
 		return ResponseEntity.created(uri).build();
+	} 
+	
+	@RequestMapping(value = "/{id}", method=RequestMethod.PUT)
+	public ResponseEntity<Void> update(
+			@RequestBody Categoria categoria, 
+			@PathVariable final Integer id) {
+		categoria.setId(id);
+		categoria = categoriaService.save(categoria);
+
+		return ResponseEntity.noContent().build();
 	} 
 }

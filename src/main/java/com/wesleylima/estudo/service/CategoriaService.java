@@ -18,8 +18,13 @@ public class CategoriaService {
 						+ ", Tipo: " + Categoria.class.getName()));
 	}
 	
-	public Categoria save(final Categoria categoria) {
+	public Categoria save(Categoria categoria) {
 		categoria.setId(null);
+		return categoriaRepository.save(categoria);
+	}
+	
+	public Categoria update(Categoria categoria) {
+		findById(categoria.getId());
 		return categoriaRepository.save(categoria);
 	}
 }
