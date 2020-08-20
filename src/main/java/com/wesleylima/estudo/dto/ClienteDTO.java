@@ -9,7 +9,9 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 import com.wesleylima.estudo.domain.Cliente;
+import com.wesleylima.estudo.service.validation.ClienteUpdate;
 
+@ClienteUpdate
 public class ClienteDTO implements Serializable{
 	private static final long serialVersionUID = 8625733889980138407L;
 

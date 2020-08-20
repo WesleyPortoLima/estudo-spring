@@ -2,42 +2,42 @@ package com.wesleylima.estudo.service.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.HandlerMapping;
 
 import com.wesleylima.estudo.controller.exception.FieldMessage;
 import com.wesleylima.estudo.domain.Cliente;
-import com.wesleylima.estudo.domain.enums.TipoCliente;
-import com.wesleylima.estudo.dto.ClienteNewDTO;
+import com.wesleylima.estudo.dto.ClienteDTO;
 import com.wesleylima.estudo.repository.ClienteRepository;
-import com.wesleylima.estudo.service.validation.utils.BR;
 
-public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
+public class ClienteUpdateValidator implements ConstraintValidator<ClienteUpdate, ClienteDTO> {
+	
+	@Autowired HttpServletRequest request;
 	
 	@Autowired private ClienteRepository repo;
 	
 	@Override
-	public void initialize(ClienteInsert ann) {
+	public void initialize(ClienteUpdate ann) {
 	}
 
 	@Override
-	public boolean isValid(ClienteNewDTO objDto, ConstraintValidatorContext context) {
-		List<FieldMessage> list = new ArrayList<>();
-
-		if(objDto.getTipo().equals(TipoCliente.PESSOAFISICA.getCod()) && !BR.isValidCPF(objDto.getCpfOuCnpj())) {
-			list.add(new FieldMessage("cpfOuCnpj", "CPF Inválido"));
-		}
+	public boolean isValid(ClienteDTO objDto, ConstraintValidatorContext context) {
+		@SuppressWarnings("unchecked")
+		Map<String, String> map = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
 		
-		if(objDto.getTipo().equals(TipoCliente.PESSOAJURIDICA.getCod()) && !BR.isValidCNPJ(objDto.getCpfOuCnpj())) {
-			list.add(new FieldMessage("cpfOuCnpj", "CNPJ Inválido"));
-		}
+		Integer uriId = Integer.parseInt(map.get("id"));
+		
+		List<FieldMessage> list = new ArrayList<>();
 		
 		Cliente aux = repo.findByEmail(objDto.getEmail());
 		
-		if (aux != null) {
+		if (aux != null && !uriId.equals(aux.getId())) {
 			list.add(new FieldMessage("email", "Email já existente"));
 		}
 		
