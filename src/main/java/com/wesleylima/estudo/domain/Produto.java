@@ -27,7 +27,7 @@ public class Produto implements Serializable {
 	
 	private String nome;
 	
-	private double preco;
+	private Double preco;
 	
 	@JsonIgnore
 	@ManyToMany
@@ -43,7 +43,7 @@ public class Produto implements Serializable {
 	
 	public Produto() {}
 
-	public Produto(Integer id, String nome, double preco) {
+	public Produto(Integer id, String nome, Double preco) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -77,11 +77,11 @@ public class Produto implements Serializable {
 		this.nome = nome;
 	}
 
-	public double getPreco() {
+	public Double getPreco() {
 		return preco;
 	}
 
-	public void setPreco(double preco) {
+	public void setPreco(Double preco) {
 		this.preco = preco;
 	}
 
