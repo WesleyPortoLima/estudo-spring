@@ -2,9 +2,11 @@ package com.wesleylima.estudo.domain;
 
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.wesleylima.estudo.domain.enums.EstadoPagamento;
 
 @Entity
+@JsonTypeName("pagamentoComCartao")
 public class PagamentoComCartao extends Pagamento {
 	private static final long serialVersionUID = 2146694286572214988L;
 
