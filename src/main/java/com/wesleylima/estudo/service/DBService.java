@@ -20,6 +20,7 @@ import com.wesleylima.estudo.domain.PagamentoComCartao;
 import com.wesleylima.estudo.domain.Pedido;
 import com.wesleylima.estudo.domain.Produto;
 import com.wesleylima.estudo.domain.enums.EstadoPagamento;
+import com.wesleylima.estudo.domain.enums.Perfil;
 import com.wesleylima.estudo.domain.enums.TipoCliente;
 import com.wesleylima.estudo.repository.CategoriaRepository;
 import com.wesleylima.estudo.repository.CidadeRepository;
@@ -116,15 +117,23 @@ public class DBService {
 		Cliente cli1 = new Cliente(
 				null, "Maria Silva", "wesleylima2209@gmail.com", "12345678910", TipoCliente.PESSOAFISICA, pe.encode("123"));
 		
+		Cliente cli2 = new Cliente(
+				null, "Maria Silva", "wesley.lima7@fatec.sp.gov.br", "47473873822", TipoCliente.PESSOAFISICA, pe.encode("123"));
+		cli2.addPerfil(Perfil.ADMIN);
+		
+		
 		cli1.getTelefones().addAll(Arrays.asList("12345678","987654321"));
+		cli2.getTelefones().addAll(Arrays.asList("40028922","55555555"));
 		
 		Endereco e1 = new Endereco(null, "Rua flores", "300", "APTO 03", "Jardim", "12345020", cli1, c2);
 		Endereco e2 = new Endereco(null, "Rua 3", "200", "APTO 05", "Paraíso", "12345020", cli1, c3);
+		Endereco e3 = new Endereco(null, "Rua 5", "202", "APTO 10", "Paraíso", "12345030", cli2, c3);
 		
 		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		cli1.getEnderecos().addAll(Arrays.asList(e3));
 		
-		clienteRepository.save(cli1);
-		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+		clienteRepository.saveAll(Arrays.asList(cli1, cli2));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2, e3));
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		
