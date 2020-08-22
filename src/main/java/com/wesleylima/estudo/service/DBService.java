@@ -119,6 +119,7 @@ public class DBService {
 		
 		Cliente cli2 = new Cliente(
 				null, "Maria Silva", "wesley.lima7@fatec.sp.gov.br", "47473873822", TipoCliente.PESSOAFISICA, pe.encode("123"));
+		cli1.addPerfil(Perfil.CLIENTE);
 		cli2.addPerfil(Perfil.ADMIN);
 		
 		
