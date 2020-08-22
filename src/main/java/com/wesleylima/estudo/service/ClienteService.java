@@ -13,11 +13,14 @@ import org.springframework.stereotype.Service;
 import com.wesleylima.estudo.domain.Cidade;
 import com.wesleylima.estudo.domain.Cliente;
 import com.wesleylima.estudo.domain.Endereco;
+import com.wesleylima.estudo.domain.enums.Perfil;
 import com.wesleylima.estudo.domain.enums.TipoCliente;
 import com.wesleylima.estudo.dto.ClienteDTO;
 import com.wesleylima.estudo.dto.ClienteNewDTO;
 import com.wesleylima.estudo.repository.ClienteRepository;
 import com.wesleylima.estudo.repository.EnderecoRepository;
+import com.wesleylima.estudo.security.UserSS;
+import com.wesleylima.estudo.service.exception.AuthorizationException;
 import com.wesleylima.estudo.service.exception.DataIntegrityException;
 import com.wesleylima.estudo.service.exception.ObjectNotFoundException;
 
@@ -31,6 +34,12 @@ public class ClienteService {
 	@Autowired private BCryptPasswordEncoder pe;
 	
 	public Cliente findById(final Integer id) {
+		UserSS user = UserService.authenticated();
+		
+		if (user == null || !user.hasRole(Perfil.ADMIN)) {
+			throw new AuthorizationException("Acesso negado!");
+		}
+		
 		return clienteRepository.findById(id).orElseThrow(
 				() -> new ObjectNotFoundException("Objeto não encontrado! Id: " + id 
 						+ ", Tipo: " + Cliente.class.getName()));
