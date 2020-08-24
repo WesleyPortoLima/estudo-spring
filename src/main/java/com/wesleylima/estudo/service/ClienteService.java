@@ -1,5 +1,6 @@
 package com.wesleylima.estudo.service;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.wesleylima.estudo.domain.Cidade;
 import com.wesleylima.estudo.domain.Cliente;
@@ -32,6 +34,8 @@ public class ClienteService {
 	@Autowired private EnderecoRepository enderecoRepository;
 	
 	@Autowired private BCryptPasswordEncoder pe;
+	
+	@Autowired private S3Service s3Service;
 	
 	public Cliente findById(final Integer id) {
 		UserSS user = UserService.authenticated();
@@ -123,5 +127,9 @@ public class ClienteService {
 	private void updateData(Cliente obj, Cliente newObj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
+	}
+	
+	public URI uploadProfilePicture(MultipartFile file) {
+		return s3Service.uploadFile(file);
 	}
 }
