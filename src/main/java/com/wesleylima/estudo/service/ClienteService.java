@@ -1,9 +1,11 @@
 package com.wesleylima.estudo.service;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,124 +30,114 @@ import com.wesleylima.estudo.service.exception.ObjectNotFoundException;
 
 @Service
 public class ClienteService {
-	
-	@Autowired private ClienteRepository clienteRepository;
-	
-	@Autowired private EnderecoRepository enderecoRepository;
-	
-	@Autowired private BCryptPasswordEncoder pe;
-	
-	@Autowired private S3Service s3Service;
-	
+
+	@Autowired
+	private ClienteRepository clienteRepository;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+
+	@Autowired
+	private BCryptPasswordEncoder pe;
+
+	@Autowired
+	private S3Service s3Service;
+
+	@Autowired
+	private ImageService imageService;
+
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
+
 	public Cliente findById(final Integer id) {
 		UserSS user = UserService.authenticated();
-		
+
 		if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
 			throw new AuthorizationException("Acesso negado!");
 		}
-		
-		return clienteRepository.findById(id).orElseThrow(
-				() -> new ObjectNotFoundException("Objeto não encontrado! Id: " + id 
-						+ ", Tipo: " + Cliente.class.getName()));
+
+		return clienteRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
 	}
-	
+
 	public Cliente save(Cliente cliente) {
 		cliente.setId(null);
 		cliente = clienteRepository.save(cliente);
 		enderecoRepository.saveAll(cliente.getEnderecos());
-		
+
 		return cliente;
 	}
-	
+
 	public Cliente update(Cliente cliente) {
 		Cliente newCli = findById(cliente.getId());
 		updateData(cliente, newCli);
-		
+
 		return clienteRepository.save(cliente);
 	}
-	
+
 	public void deleteById(final Integer id) {
 		findById(id);
 		try {
-		clienteRepository.deleteById(id);
-		}
-		catch(DataIntegrityViolationException e) {
+			clienteRepository.deleteById(id);
+		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível deletar porquê há pedidos relacionados!");
 		}
 	}
-	
+
 	public List<Cliente> findAll() {
 		return clienteRepository.findAll();
 	}
-	
+
 	public Page<Cliente> findPage(final Integer page, final Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		
+
 		return clienteRepository.findAll(pageRequest);
 	}
-	
+
 	public Cliente fromDTO(ClienteDTO dto) {
 		return new Cliente(dto.getId(), dto.getNome(), dto.getEmail(), null, null, null);
 	}
-	
+
 	public Cliente fromDTO(ClienteNewDTO dto) {
-		Cliente cli = new Cliente(
-				null, 
-				dto.getNome(), 
-				dto.getEmail(), 
-				dto.getCpfOuCnpj(), 
-				TipoCliente.toEnum(dto.getTipo()), 
-				pe.encode(dto.getSenha()));
-		
+		Cliente cli = new Cliente(null, dto.getNome(), dto.getEmail(), dto.getCpfOuCnpj(),
+				TipoCliente.toEnum(dto.getTipo()), pe.encode(dto.getSenha()));
+
 		Cidade cid = new Cidade(dto.getCidadeId(), null, null);
-		
-		Endereco end = new Endereco(
-				null, 
-				dto.getLogradouro(), 
-				dto.getNumero(),
-				dto.getComplemento(), 
-				dto.getBairro(), 
-				dto.getCep(), 
-				cli, 
-				cid);
-		
+
+		Endereco end = new Endereco(null, dto.getLogradouro(), dto.getNumero(), dto.getComplemento(), dto.getBairro(),
+				dto.getCep(), cli, cid);
+
 		cli.getEnderecos().add(end);
-		
+
 		cli.getTelefones().add(dto.getTelefone1());
-		
+
 		if (dto.getTelefone2() != null) {
 			cli.getTelefones().add(dto.getTelefone2());
 		}
-		
+
 		if (dto.getTelefone3() != null) {
 			cli.getTelefones().add(dto.getTelefone3());
 		}
-		
+
 		return cli;
 	}
-	
+
 	private void updateData(Cliente obj, Cliente newObj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
 	}
-	
+
 	public URI uploadProfilePicture(MultipartFile file) {
 		UserSS user = UserService.authenticated();
-		
+
 		if (user == null) {
 			throw new AuthorizationException("Acesso negado");
 		}
-		
-		Cliente cliente = clienteRepository.findById(user.getId()).orElseThrow(
-				() -> new ObjectNotFoundException("Objeto não encontrado! Id: " + user.getId() 
-						+ ", Tipo: " + Cliente.class.getName()));
-		
-		 URI uri = s3Service.uploadFile(file);
-		 
-		 cliente.setImageUrl(uri.toString());
-		 
-		 clienteRepository.save(cliente);
-		 
-		 return uri;
+
+		BufferedImage img = imageService.getJpgImageFromFile(file);
+
+		String fileName = prefix + user.getId() + ".jpg";
+
+		return s3Service.uploadFile(imageService.getInputStream(img, "jpg"), fileName, "image");
 	}
 }
