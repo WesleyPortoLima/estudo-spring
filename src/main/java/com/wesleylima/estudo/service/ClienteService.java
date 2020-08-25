@@ -48,6 +48,9 @@ public class ClienteService {
 
 	@Value("${img.prefix.client.profile}")
 	private String prefix;
+	
+	@Value("${img.profile.size}")
+	private Integer size;
 
 	public Cliente findById(final Integer id) {
 		UserSS user = UserService.authenticated();
@@ -135,6 +138,8 @@ public class ClienteService {
 		}
 
 		BufferedImage img = imageService.getJpgImageFromFile(file);
+		img = imageService.cropSquare(img);
+		img = imageService.resize(img, size);
 
 		String fileName = prefix + user.getId() + ".jpg";
 
